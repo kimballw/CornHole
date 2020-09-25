@@ -31,22 +31,13 @@ const int hole4Score = 5;
 int score1 = 0;
 int score2 = 0;
 
+int val1 = 0;
+int val2 = 0;
+int val3 = 0;
+int val4 = 0;
+int reset = 0;
+  
 int playerTurn = 1;
-
-void setup() {
-  pinMode(PIR1, INPUT);
-  pinMode(PIR2, INPUT);
-  pinMode(PIR3, INPUT);
-  pinMode(PIR4, INPUT);
-
-  pinMode(RELAY1, OUTPUT);
-  pinMode(RELAY2, OUTPUT);
-
-  pinMode(RESET, INPUT);
-
-  Serial.begin(9600);
-  secondSerial.begin(9600);
-}
 
 void showSingleDigit(int digit, int serial) {
   switch (digit) {
@@ -524,6 +515,30 @@ void resetGame() {
   secondSerial.write(0x03); // End of text (ctrl-C)
 }
 
+void setup() {
+  pinMode(PIR1, INPUT);
+  pinMode(PIR2, INPUT);
+  pinMode(PIR3, INPUT);
+  pinMode(PIR4, INPUT);
+
+  pinMode(RELAY1, OUTPUT);
+  pinMode(RELAY2, OUTPUT);
+
+  pinMode(RESET, INPUT);
+
+  digitalWrite(PIR1, LOW);
+  digitalWrite(PIR2, LOW);
+  digitalWrite(PIR3, LOW);
+  digitalWrite(PIR4, LOW);
+  digitalWrite(RESET, LOW);
+
+  Serial.begin(9600);
+  secondSerial.begin(9600);
+
+  //delay(30000);
+  resetGame();
+}
+
 void scoreFunction(int val, int score) {
   if (playerTurn == 1) {
     score1 = score1 + score;
@@ -549,22 +564,45 @@ void scoreFunction(int val, int score) {
 }
 
 void loop() {
-  int val1 = digitalRead(PIR1);
-  int val2 = digitalRead(PIR2);
-  int val3 = digitalRead(PIR3);
-  int val4 = digitalRead(PIR4);
-  int reset = digitalRead(RESET);
-  
+  val1 = digitalRead(PIR1);
+  val2 = digitalRead(PIR2);
+  val3 = digitalRead(PIR3);
+  val4 = digitalRead(PIR4);
+  reset = digitalRead(RESET);
+  Serial.print(val1);
+  Serial.print(", ");
+  Serial.print(val2);
+  Serial.print(", ");
+  Serial.print(val3);
+  Serial.print(", ");
+  Serial.print(val4);
+  Serial.print(", ");
+  Serial.print(reset);
+  Serial.println("");
   if (val1 == HIGH) {
+    Serial.println("val1 HIGH");
     scoreFunction(val1, hole1Score);
+    delay(2000);
+    digitalWrite(PIR1, LOW);
   } else if (val2 == HIGH) {
+    Serial.println("val2 HIGH");
     scoreFunction(val2, hole2Score);
+    delay(2000);
+    digitalWrite(PIR2, LOW);
   } else if (val3 == HIGH) {
+    Serial.println("val3 HIGH");
     scoreFunction(val3, hole3Score);
+    delay(2000);
+    digitalWrite(PIR3, LOW);
   } else if (val4 == HIGH) {
+    Serial.println("val4 HIGH");
     scoreFunction(val4, hole4Score);
+    delay(2000);
+    digitalWrite(PIR4, LOW);
   } else if (reset == HIGH) {
+    Serial.println("resetGame");
     resetGame();
+    digitalWrite(RESET, LOW);
   }
 
   Serial.print("Player 1 - ");
